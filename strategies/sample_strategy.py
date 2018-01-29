@@ -12,7 +12,7 @@ class SampleStrategy(op.Strategy):
         self.set_end_date(2016, 2, 26)
 
         # define time events
-        self.scheduler.on(self.date_rule.every(op.DayOfWeek.THURSDAY), self.filter_options)
+        # self.scheduler.on(self.date_rule.every(op.DayOfWeek.THURSDAY), self.filter_options)
 
         # add vertical put spreads for this strategy
         self.add_option_strategy(

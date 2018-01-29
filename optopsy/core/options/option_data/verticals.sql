@@ -1,17 +1,16 @@
-WITH width AS (
+-- This code assumes we have a PostgreSQL database setup with a table xxx_option_chain
+-- where 'xxx' is the symbol name for the option chains and a 'range' table specifying
+-- the ranges for prices to observe for a given spread width.
 
-    SELECT 2 AS "width"
-
-), verticals AS (
+WITH verticals AS (
     SELECT
       c1.symbol || '-' || c2.symbol                           AS "spread_symbol",
       c1.expiration :: DATE - c1.quote_date :: DATE           AS "DTE",
       c1.option_type,
-      ROUND((((c1.bid - c2.bid) + (c1.ask - c2.ask)) / 2), 2) AS "mark",
-      width.width
+      :width as "width",
+      ROUND((((c1.bid - c2.bid) :: numeric + (c1.ask - c2.ask) :: numeric) / 2), 2) AS "mark"
     FROM vxx_option_chain c1
-      INNER JOIN width ON 1 = 1
-      INNER JOIN vxx_option_chain c2 ON (c1.strike - width) = (c2.strike) AND
+      INNER JOIN vxx_option_chain c2 ON (c1.strike - :width) = (c2.strike) AND
                                         c1.expiration = c2.expiration AND
                                         c1.quote_date = c2.quote_date AND
                                         c1.root = c2.root AND
@@ -26,9 +25,9 @@ WITH width AS (
       "DTE",
       mark
     FROM verticals
-      INNER JOIN ranges ON mark > ranges.min_val AND
-                           mark <= ranges.max_val AND
-                           ranges.width = verticals.width AND
+      INNER JOIN range ON mark > range.min_value AND
+                           mark <= range.max_value AND
+                           range.width = verticals.width AND
                            "DTE" = 46
 
 ), selection_end AS (
@@ -51,7 +50,6 @@ WITH width AS (
       INNER JOIN selection_end ON selection_start.spread_symbol = selection_end.spread_symbol
 
 )
-
 
 SELECT
   verticals.spread_symbol,

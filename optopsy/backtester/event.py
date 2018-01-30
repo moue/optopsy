@@ -1,6 +1,4 @@
-from enum import Enum
-
-EventType = Enum("EventType", "DATA ORDER FILL REJECTED")
+from optopsy.globals import EventType
 
 
 class Event(object):

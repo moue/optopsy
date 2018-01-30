@@ -3,7 +3,8 @@ import datetime
 from optopsy.backtester.event import OrderEvent
 from optopsy.backtester.order import Order
 from optopsy.core.options.option_query import OptionQuery
-from optopsy.globals import OrderAction, OrderType, OrderTIF
+from optopsy.globals import OrderAction, OrderType, OrderTIF, EventType
+from optopsy.backtester.scheduler import Scheduler
 
 
 class Strategy(object):
@@ -19,6 +20,8 @@ class Strategy(object):
         self.broker = broker
         self.account = account
         self.sizer = sizer
+
+        self.scheduler = Scheduler()
 
         # strategy specific variables
         self.start_date = None
@@ -88,9 +91,6 @@ class Strategy(object):
         """
         self.end_date = datetime.date(year=year, month=month, day=day).strftime("%Y-%m-%d")
 
-    def is_invested(self):
-        return len(self.positions) != 0
-
     def on_init(self, **params):
         raise NotImplementedError
 
@@ -99,24 +99,52 @@ class Strategy(object):
         self.on_data(event.quotes)
 
     def on_data(self, data):
+        """
+        Override and implement trading logic in this method. This is the primary entry point for your
+        algorithm. Each new data point will be passed into this method.
+        :param data: A dictionary of OptionQuery objects for each symbol
+                     added to the strategy from the on_init function.
+        :return: None
+        """
         raise NotImplementedError
 
     def on_fill_event(self, event):
-        self.on_fill(event)
+        if event.event_type == EventType.FILL:
+            self.on_fill(event)
 
     def on_fill(self, event):
+        """
+        Override and implement on_fill logic in this method. This method is called whenever
+        an order is filled.
+        :param event: An event object with eventType.FILL
+        :return: None
+        """
         pass
 
     def on_expired_event(self, event):
-        self.on_expired(event)
+        if event.event_type == EventType.EXPIRED:
+            self.on_expired(event)
 
     def on_expired(self, event):
+        """
+        Override and implement on_expired logic in this method. This method is called whenever
+        an order is expired.
+        :param event: An event object with eventType.EXPIRED
+        :return: None
+        """
         pass
 
     def on_rejected_event(self, event):
-        self.on_rejected(event)
+        if event.event_type == EventType.REJECTED:
+            self.on_rejected(event)
 
     def on_rejected(self, event):
+        """
+        Override and implement on_rejected logic in this method. This method is called whenever
+        an order is rejected.
+        :param event: An event object with eventType.REJECTED
+        :return: None
+        """
         pass
 
     def place_order(self, strategy, action, quantity, order_type, price, tif):
@@ -163,4 +191,3 @@ class Strategy(object):
 
     def buy_to_close(self, strategy, quantity=None, order_type=OrderType.MKT, price=None, tif=OrderTIF.GTC):
         self.place_order(strategy, OrderAction.BTC, quantity, order_type, price, tif)
-

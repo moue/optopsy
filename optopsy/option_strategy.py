@@ -1,5 +1,7 @@
-from .option_query import *
 from abc import ABC
+
+from .option_query import *
+
 
 class OptionStrategy(ABC):
     """

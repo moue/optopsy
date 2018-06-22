@@ -10,7 +10,7 @@ from .base import *
 
 def test_invalid_fields():
     with pytest.raises(ValueError):
-        op.get(os.path.join(os.path.dirname(__file__), 'test_data', 'test_dod_a.csv'),
+        op.get(os.path.join(os.path.dirname(__file__), 'test_data', 'options', 'test_dod_a.csv'),
                start=date(2016, 1, 1),
                end=date(2016, 12, 31),
                struct=invalid_fields
@@ -19,7 +19,7 @@ def test_invalid_fields():
 
 def test_valid_fields():
     try:
-        op.get(os.path.join(os.path.dirname(__file__), 'test_data', 'test_dod_a.csv'),
+        op.get(os.path.join(os.path.dirname(__file__), 'test_data', 'options', 'test_dod_a.csv'),
                start=date(2016, 1, 1),
                end=date(2016, 12, 31),
                struct=valid_fields,
@@ -31,7 +31,7 @@ def test_valid_fields():
 
 def test_invalid_idx():
     with pytest.raises(ValueError):
-        op.get(os.path.join(os.path.dirname(__file__), 'test_data', 'test_dod_a.csv'),
+        op.get(os.path.join(os.path.dirname(__file__), 'test_data', 'options', 'test_dod_a.csv'),
                start=date(2016, 1, 1),
                end=date(2016, 12, 31),
                struct=invalid_idx,
@@ -44,7 +44,7 @@ def test_invalid_start_end():
     end = date(2015, 1, 1)
 
     with pytest.raises(ValueError):
-        op.get(os.path.join(os.path.dirname(__file__), 'test_data', 'test_dod_a.csv'),
+        op.get(os.path.join(os.path.dirname(__file__), 'test_data', 'options', 'test_dod_a.csv'),
                start=start,
                end=end,
                struct=valid_fields,
@@ -57,7 +57,7 @@ def test_invalid_start_end_fields():
     end = date(2015, 1, 1)
 
     with pytest.raises(ValueError):
-        op.get(os.path.join(os.path.dirname(__file__), 'test_data', 'test_dod_a.csv'),
+        op.get(os.path.join(os.path.dirname(__file__), 'test_data', 'options', 'test_dod_a.csv'),
                start=start,
                end=end,
                struct=invalid_fields,
@@ -78,7 +78,7 @@ def test_data_cboe_import():
                                            )
     test_df.set_index('quote_date', inplace=True, drop=False)
 
-    data = op.get(os.path.join(os.path.dirname(__file__), 'test_data', 'test_cboe_spx.csv'),
+    data = op.get(os.path.join(os.path.dirname(__file__), 'test_data', 'options', 'test_cboe_spx.csv'),
                   start=date(2016, 1, 1),
                   end=date(2016, 12, 31),
                   struct=cboe_struct,
@@ -95,7 +95,7 @@ def test_data_dod_import():
     test_df['quote_date'] = pd.to_datetime(test_df.quote_date, format='%Y-%m-%d')
     test_df.set_index(['quote_date'], inplace=True, drop=False)
 
-    data = op.get(os.path.join(os.path.dirname(__file__), 'test_data', 'test_dod_a.csv'),
+    data = op.get(os.path.join(os.path.dirname(__file__), 'test_data', 'options', 'test_dod_a.csv'),
                   start=date(2016, 1, 1),
                   end=date(2016, 12, 31),
                   struct=dod_struct,
@@ -112,7 +112,7 @@ def test_data_dod_with_sym_import():
     test_df['quote_date'] = pd.to_datetime(test_df.quote_date, format='%Y-%m-%d')
     test_df.set_index(['quote_date'], inplace=True, drop=False)
 
-    data = op.get(os.path.join(os.path.dirname(__file__), 'test_data', 'test_dod_a.csv'),
+    data = op.get(os.path.join(os.path.dirname(__file__), 'test_data', 'options', 'test_dod_a.csv'),
                   start=date(2016, 1, 1),
                   end=date(2016, 12, 31),
                   struct=dod_struct_with_opt_sym,
@@ -131,7 +131,7 @@ def test_data_cboe_import_bulk():
                                            format='%Y-%m-%d')
     test_df.set_index(['quote_date'], inplace=True, drop=False)
 
-    data = op.gets(os.path.join(os.path.dirname(__file__), 'test_data', 'daily'),
+    data = op.gets(os.path.join(os.path.dirname(__file__), 'test_data', 'options', 'bulk'),
                    start=date(2016, 1, 4),
                    end=date(2016, 1, 6),
                    struct=cboe_struct,
@@ -150,7 +150,7 @@ def test_data_cboe_date_range():
                                            format='%Y-%m-%d')
     test_df.set_index(['quote_date'], inplace=True, drop=False)
 
-    data = op.gets(os.path.join(os.path.dirname(__file__), 'test_data', 'daily'),
+    data = op.gets(os.path.join(os.path.dirname(__file__), 'test_data', 'options', 'bulk'),
                    start=date(2016, 1, 5),
                    end=date(2016, 1, 6),
                    struct=cboe_struct,
@@ -162,7 +162,7 @@ def test_data_cboe_date_range():
 
 def test_duplicate_idx_in_struct():
     with pytest.raises(ValueError):
-        op.get(os.path.join(os.path.dirname(__file__), 'test_data', 'daily'),
+        op.get(os.path.join(os.path.dirname(__file__), 'test_data', 'options', 'bulk'),
                start=date(2016, 1, 5),
                end=date(2016, 1, 6),
                struct=invalid_struct,

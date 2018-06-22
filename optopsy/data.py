@@ -28,11 +28,23 @@ fields = (
     ('gamma', False),
     ('theta', False),
     ('vega', False),
-    ('rho', False)
+    ('rho', False),
+    ('open', False),
+    ('high', False),
+    ('low', False),
+    ('close', False)
+)
+
+stk_fields = (
+    ('quote_date', True),
+    ('open', False),
+    ('high', False),
+    ('low', False),
+    ('close', True)
 )
 
 
-def _import(path, start, end, struct, skiprows, prompt, bulk):
+def _import(path, start, end, struct, skiprows, prompt, bulk=False, mode='option'):
     """
     This method will read in the data file using pandas and assign the
     normalized dataframe to the class's data variable.
@@ -69,22 +81,26 @@ def _import(path, start, end, struct, skiprows, prompt, bulk):
         if prompt:
             print(df.head())
             if user_prompt("Does this look correct?"):
-                return _format(df).loc[start:end]
+                return _format(df, start, end, mode)
         elif not prompt:
-            return _format(df).loc[start:end]
+            return _format(df, start, end, mode)
         else:
             sys.exit()
 
 
+def get_stk(file_path, start, end, struct, skiprows=1, prompt=True):
+    return _import(file_path, start, end, struct, skiprows, prompt, mode='stock')
+
+
 def get(file_path, start, end, struct, skiprows=1, prompt=True):
-    return _import(file_path, start, end, struct, skiprows, prompt, bulk=False)
+    return _import(file_path, start, end, struct, skiprows, prompt)
 
 
 def gets(dir_path, start, end, struct, skiprows=1, prompt=True):
-    return _import(dir_path, start, end, struct, skiprows, prompt, bulk=True)
+    return _import(dir_path, start, end, struct, skiprows, prompt)
 
 
-def _format(df):
+def _format(df, start, end, mode):
     """
     Format the data frame to a standard format
     :param df: dataframe to format
@@ -115,7 +131,7 @@ def _format(df):
             axis=1
         )
 
-    return df
+    return df.loc[start:end]
 
 
 def _check_structs(struct, start, end):

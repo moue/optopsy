@@ -41,3 +41,6 @@ class Optopsy(object):
                     bar.stop()
 
         print('\nDone!')
+
+    def optimize(self):
+        pass

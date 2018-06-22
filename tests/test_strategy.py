@@ -1,10 +1,11 @@
 import pytest
+
 import optopsy as op
 
 
 def test_invalid_opt_strategy():
     with pytest.raises(ValueError):
-        op.Strategy('test', op.Filter(), 'list of filters')
+        op.Strategy('test', op.Filter(op.FilterType.ENTRY, 1), 'list of filters')
 
 
 def test_init_strategy_with_filters():

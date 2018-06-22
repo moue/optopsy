@@ -33,16 +33,14 @@ class Strategy(object):
     def update(self, date):
         # current quote date
         self.now = date
-
-        # we will slice our spread_data by today's date
-        latest_quote = op.OptionQuery(self.spread_data.loc[self.now])
+        quote = op.OptionQuery(self.spread_data.loc[self.now])
 
         # run entry filters against our current quote prices if defined
         if self.filters is not None:
-            self.filter_stack(self, latest_quote)
+            self.filter_stack.execute(quote)
         else:
             # if no filters provided, use the logic in the overridden on_update function
-            self.on_update(latest_quote)
+            self.on_update(quote)
 
     def on_setup(self):
         pass
